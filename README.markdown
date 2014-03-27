@@ -64,3 +64,7 @@ Striving for minimalism, this plugin weighs under 60 lines of code.
 ## License
 Copyright (c) Akshay Hegde. Distributed under the same terms as Vim itself. See
 `:help license`
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ajh17/vimcompletesme/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
