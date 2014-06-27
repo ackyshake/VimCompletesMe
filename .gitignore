@@ -1,2 +1,4 @@
 tags
 doc/tags
+test/*.msgout
+test/*.tap
