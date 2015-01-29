@@ -26,6 +26,10 @@ following type of completions:
 * Omni completion
   ([Ctrl-X_Ctrl-O](http://vimhelp.appspot.com/insert.txt.html#i_CTRL-X_CTRL-O))
 
+VimCompletesMe will even switch to keyword completion if none of the above
+completions has any results. Simply hitting Tab again will switch the context
+to keyword completion.
+
 You can set the `b:vcm_tab_complete` variable interactively, or in an
 autocommand:
 
@@ -35,29 +39,13 @@ Striving for minimalism, this plugin weighs under 70 lines of code.
 
 
 ## Installation
+If you don't have a preferred installation method, I recommend installing
+[pathogen.vim](https://github.com/tpope/vim-pathogen), and then simply copy and
+paste:
 
-1. **Pathogen:**
+    cd ~/.vim/bundle && git clone git://github.com/ajh17/VimCompletesMe.git
 
-        cd ~/.vim/bundle
-        git clone https://github.com/ajh17/VimCompletesMe.git
-
-2. **Vundle:**
-
-    Add the following to your ~/.vimrc:
-
-        Bundle 'ajh17/VimCompletesMe'
-
-    Then execute `:BundleInstall` after restarting Vim.
-
-3. **Manual (Not recommended):**
-
-        git clone https://github.com/ajh17/VimCompletesMe.git
-        cd VimCompletesMe
-        mv plugin/* ~/.vim/plugin/
-        mv doc/* ~/.vim/doc/
-
-    Once the help tags have been generated, you can read the manual with
-    `:help VimCompletesMe`.
+Once the helptags have been generated, see `:h VimCompletesMe` for usage.
 
 ## Thanks
 * [bairui](https://github.com/dahu) for helping me with this plugin, and for

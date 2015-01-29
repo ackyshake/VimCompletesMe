@@ -27,6 +27,7 @@ following options:
 |'b:vcm_tab_complete'|          Use a specific type of completion.
 |'g:vcm_direction'|             Controls the direction of the completion.
 |'g:vcm_s_tab_behavior'|        Controls the behavior of Shift-Tab.
+|'g:vcm_default_maps'|          Set up default maps (Tab + Shift Tab)
 
 ------------------------------------------------------------------------------
                                                          *'b:vcm_tab_complete'*
@@ -40,7 +41,7 @@ intelligently (depending on the context) use:
 2. File path completion     (|i_Ctrl-X_Ctrl-F|)
 3. Omni completion          (|i_Ctrl-X_Ctrl-F|)
 
-You can set *b:vcm_tab_complete* to one of the following to use a specific type
+You can set |b:vcm_tab_complete| to one of the following to use a specific type
 of completion:
 
 1. "dict"   - Dictionary completion |i_Ctrl-X_Ctrl-K|
@@ -53,6 +54,12 @@ The b:vcm_tab_complete makes a great |:autocmd| as follows:
 >
     autocmd FileType ruby let b:vcm_tab_complete = "tags"
 <
+
+When none of the special completions above get any results, you can press Tab
+again to have VimCompletesMe switch the context to keyword completion. The
+context will be automatically switched back to the completion set in
+the |b:vcm_tab_complete| variable.
+
 NOTE: The "dict" option requires the user to set |'dictionary'| in their
 |vimrc| file. In Unix, you can put the following in your ~/.vimrc:
 >
@@ -89,17 +96,26 @@ You can change this variable by putting the following in your |vimrc|:
 >
     let g:vcm_s_tab_behavior = 1
 <
+------------------------------------------------------------------------------
+                                                         *'g:vcm_default_maps'*
+Values: numeric                                                               ~
+Default: 1                                                                    ~
+
+Set up mappings for Tab and Shift-Tab. If you would like to use your
+own mappings, unset this variable by putting the following in your |vimrc|:
+>
+    let g:vcm_default_maps = 0
+<
 ==============================================================================
  3. FREQUENTLY ASKED QUESTIONS                             *VimCompletesMe-faq*
 
-1. When the popup menu is opened, how can I make the Enter key select the   ~
-   completion entry instead of creating a new line?                         ~
+1. When the popup menu is opened, how can I make the Enter key select the     ~
+   completion entry instead of creating a new line?                           ~
 
 Solution: Just make a mapping like the following, in your |vimrc|:
 >
-    imap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+    inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 <
-
 ------------------------------------------------------------------------------
 
 Template From: https://github.com/dahu/Area-41/
