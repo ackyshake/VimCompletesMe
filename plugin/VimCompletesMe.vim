@@ -83,10 +83,13 @@ function! s:vim_completes_me(shift_tab)
   endif
 endfunction
 
+inoremap <expr> <plug>vim_completes_me_forward  <sid>vim_completes_me(0)
+inoremap <expr> <plug>vim_completes_me_backward <sid>vim_completes_me(1)
+
 " Maps: {{{1
 if g:vcm_default_maps
-  inoremap <expr> <Tab> <SID>vim_completes_me(0)
-  inoremap <expr> <S-Tab> <SID>vim_completes_me(1)
+  imap <Tab>   <plug>vim_completes_me_forward
+  imap <S-Tab> <plug>vim_completes_me_backward
 endif
 
 " Autocmds {{{1
