@@ -37,37 +37,36 @@ following options:
 Values: string                                                                ~
 Default: unset                                                               ~
 
-Controls the type of completion to use. If empty, the |<Tab>| key will
+Controls the type of completion to use. The |<Tab>| key will
 intelligently (depending on the context) use:
 
-1. Local keyword completion (|i_Ctrl-X_Ctrl-N|)
-2. File path completion     (|i_Ctrl-X_Ctrl-F|)
-3. Omni completion          (|i_Ctrl-X_Ctrl-O|)
+1. File Path completion                (|i_Ctrl-X_Ctrl-F|)
+2. Omni completion                     (|i_Ctrl-X_Ctrl-O|)
+3. The user specifc completion set by  (|b:vcm_tab_complete|)
+4. Generic Keyword completion          (|i_Ctrl-N|)
 
-You can set |b:vcm_tab_complete| to one of the following to use a specific type
-of completion, for example:
+You can set |b:vcm_tab_complete| to, say,
 >
-['\<C-u>'] = User-defined completion |i_Ctrl-X_Ctrl-U|
-['\<C-v>'] = Vim command line completion |i_Ctrl-X_Ctrl-V|
-['\<C-o>'] = Omni completion |i_Ctrl-X_Ctrl-O|
-['\<C-s>'] = Spell correction completion |i_Ctrl-X_Ctrl-S|
+'\<C-u>' = User-defined completion |i_Ctrl-X_Ctrl-U|
+'\<C-v>' = Vim command line completion |i_Ctrl-X_Ctrl-V|
+'\<C-s>' = Spell correction completion |i_Ctrl-X_Ctrl-S|
  ...
 <
-The b:vcm_tab_complete makes a great |:autocmd|. For example
+in a |:autocmd|, for example,
 >
-    autocmd FileType vim let b:vcm_tab_complete = "[v]"
+    autocmd FileType vim let b:vcm_tab_complete = '\<C-v>'
 <
-When none of the special completions above get any results, you can press Tab
-again to have VimCompletesMe switch the context to keyword completion. In some
-situations (like after completing something and then trying the context switch
-again without leaving insert mode), you may need a Vim version greater than
-7.3.598 to get the best context switch behavior. The context will be
-automatically switched back to the completion set in the |b:vcm_tab_complete|
-variable.
+
+5. When none of the special completions above get any results,
+   you can press Tab again to force Vim's generic keyword completion.
+
+In some situations (like after completing something and then trying the
+context switch again without leaving insert mode), you may need a Vim
+version greater than 7.3.598 to get the best context switch behavior.
 
                                                          *'g:vcm_tab_complete'*
 Values: string                                                                ~
-Default: ''                                                               ~
+Default: ''                                                                   ~
 
 The global variant of |b:vcm_tab_complete| and which which applies in case
 |b:vcm_tab_complete| is not set.
