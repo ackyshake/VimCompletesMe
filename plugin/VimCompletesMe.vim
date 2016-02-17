@@ -26,6 +26,10 @@ if !exists('g:vcm_omni_pattern')
   let g:vcm_omni_pattern = '\v\k+(\.|->|::)\k*$'
 endif
 
+if !exists('g:vcm_tab_complete')
+  let g:vcm_tab_complete = ''
+endif
+
 " Functions: {{{1
 function! s:vim_completes_me(shift_tab)
   let dirs = ["\<c-p>", "\<c-n>"]
@@ -74,7 +78,7 @@ function! s:vim_completes_me(shift_tab)
   " Fallback
   let b:completion_tried = 1
   let tab_complete = get(b:, 'vcm_tab_complete', get(g:, 'vcm_tab_complete'))
-  if tab_complete isnot 0
+  if !empty(tab_complete)
     return "\<C-x>\<C-" . tab_complete . ">"
   else
     return dirs[!dir]

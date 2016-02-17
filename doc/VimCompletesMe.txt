@@ -67,10 +67,11 @@ variable.
 
                                                          *'g:vcm_tab_complete'*
 Values: string                                                                ~
-Default: unset                                                               ~
+Default: ''                                                               ~
 
-The global variant of |b:vcm_tab_complete| which applies in case
+The global variant of |b:vcm_tab_complete| and which which applies in case
 |b:vcm_tab_complete| is not set.
+
 ------------------------------------------------------------------------------
                                                             *'g:vcm_direction'*
 Values: string                                                                ~
@@ -111,18 +112,22 @@ own mappings, unset this variable by putting the following in your |vimrc|:
     let g:vcm_default_maps = 0
 <
 ------------------------------------------------------------------------------
+                                                         *'b:vcm_omni_pattern*
+Values: string                                                               ~
+Default: unset                                                         ~
+
+The buffer-local pattern after which VimCompletesMe triggers Omni-completion.
+To be set by an 'autocmd FileType ...'. Set it equal to '0' to make it never
+match.
+
+------------------------------------------------------------------------------
                                                          *'g:vcm_omni_pattern*
 Values: string                                                               ~
 Default: '\v\k+(\.|->|::)\k*$'                                                ~
 
-The global pattern after which VimCompletesMe triggers Omni-completion.
-
-------------------------------------------------------------------------------
-                                                         *'b:vcm_omni_pattern*
-Values: string                                                               ~
-Default: g:vcm_omni_pattern                                                  ~
-
-The buffer-local pattern after which VimCompletesMe triggers Omni-completion.
+The global pattern after which VimCompletesMe triggers Omni-completion and
+which applies if |b:vcm_omni-pattern| is unset. Set it equal to '0' to make
+it never match.
 
 ==============================================================================
  3. FREQUENTLY ASKED QUESTIONS                             *VimCompletesMe-faq*
