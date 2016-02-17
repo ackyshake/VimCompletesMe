@@ -113,7 +113,7 @@ own mappings, unset this variable by putting the following in your |vimrc|:
 ------------------------------------------------------------------------------
                                                          *'g:vcm_omni_pattern*
 Values: string                                                               ~
-Default: '\v(\.|->|::)$'                                                    ~
+Default: '\v\k+(\.|->|::)$'                                                    ~
 
 The global pattern after which VimCompletesMe triggers Omni-completion.
 
