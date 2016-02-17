@@ -23,7 +23,7 @@ if !exists('g:vcm_default_maps')
 endif
 
 if !exists('g:vcm_omni_pattern')
-  let g:vcm_omni_pattern = '\v\k+(\.|->|::)$'
+  let g:vcm_omni_pattern = '\v\k+(\.|->|::)\k*$'
 endif
 
 " Functions: {{{1

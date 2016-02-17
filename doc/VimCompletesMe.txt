@@ -28,8 +28,8 @@ following options:
 |'g:vcm_direction'|             Controls the direction of the completion.
 |'g:vcm_s_tab_behavior'|        Controls the behavior of Shift-Tab.
 |'g:vcm_default_maps'|          Set up default maps (Tab + Shift Tab)
-|'g:vcm_omni_pattern|           Global pattern to trigger Omni-completion
 |'b:vcm_omni_pattern|           Local pattern to trigger Omni-completion
+|'g:vcm_omni_pattern|           Global pattern to trigger Omni-completion
 
 ------------------------------------------------------------------------------
                                                          *'b:vcm_tab_complete'*
@@ -111,20 +111,22 @@ own mappings, unset this variable by putting the following in your |vimrc|:
     let g:vcm_default_maps = 0
 <
 ------------------------------------------------------------------------------
-                                                         *'g:vcm_omni_pattern*
-Values: string                                                               ~
-Default: '\v\k+(\.|->|::)$'                                                    ~
-
-The global pattern after which VimCompletesMe triggers Omni-completion.
-Set it equal to '0' to make it never match.
-
-------------------------------------------------------------------------------
                                                          *'b:vcm_omni_pattern*
 Values: string                                                               ~
 Default: unset                                                         ~
 
-The buffer-local pattern after which VimCompletesMe triggers Omni-completion to be set by a autocmd FileType ...
-Set it equal to '0' to make it never match.
+The buffer-local pattern after which VimCompletesMe triggers Omni-completion.
+To be set by an 'autocmd FileType ...'. Set it equal to '0' to make it never
+match.
+
+------------------------------------------------------------------------------
+                                                         *'g:vcm_omni_pattern*
+Values: string                                                               ~
+Default: '\v\k+(\.|->|::)\k*$'                                                ~
+
+The global pattern after which VimCompletesMe triggers Omni-completion and
+which applies if |b:vcm_omni-pattern| is unset. Set it equal to '0' to make
+it never match.
 
 ==============================================================================
  3. FREQUENTLY ASKED QUESTIONS                             *VimCompletesMe-faq*
