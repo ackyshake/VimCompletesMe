@@ -47,10 +47,10 @@ intelligently (depending on the context) use:
 You can set |b:vcm_tab_complete| to one of the following to use a specific type
 of completion, for example:
 >
-['u'] = User-defined completion |i_Ctrl-X_Ctrl-U|
-['v'] = Vim command line completion |i_Ctrl-X_Ctrl-V|
-['o'] = Omni completion |i_Ctrl-X_Ctrl-O|
-['s'] = Spell correction completion |i_Ctrl-X_Ctrl-S|
+['\<C-u>'] = User-defined completion |i_Ctrl-X_Ctrl-U|
+['\<C-v>'] = Vim command line completion |i_Ctrl-X_Ctrl-V|
+['\<C-o>'] = Omni completion |i_Ctrl-X_Ctrl-O|
+['\<C-s>'] = Spell correction completion |i_Ctrl-X_Ctrl-S|
  ...
 <
 The b:vcm_tab_complete makes a great |:autocmd|. For example

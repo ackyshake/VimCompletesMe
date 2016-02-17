@@ -32,60 +32,48 @@ endif
 
 " Functions: {{{1
 function! s:vim_completes_me(shift_tab)
-  let dirs = ["\<c-p>", "\<c-n>"]
-  let dir = g:vcm_direction =~? '[nf]'
+  let Ctrl_PN = (g:vcm_direction ==# 'n') && !a:shift_tab ? "\<c-p>" : "\<c-n>"
 
   if pumvisible()
-    if a:shift_tab
-      return dirs[!dir]
-    else
-      return dirs[dir]
-    endif
+      return Ctrl_PN
   endif
 
-  " Figure out whether we should indent.
+  " Cursor after whitespace => indent
   let pos = getpos('.')
   let substr = matchstr(strpart(getline(pos[1]), 0, pos[2]-1), "[^ \t]*$")
   if empty(substr)
     return (a:shift_tab && !g:vcm_s_tab_behavior) ? "\<C-d>" : "\<Tab>"
   endif
 
-  " Figure out if user has started typing a path or a period or an arrow
-  " operator
+  " Completion failed => Vim's generic keyword completion
+  if get(b:,'completion_tried') && (get(b:, 'tab_complete_pos', []) == pos)
+    let b:completion_tried = 0
+    return "\<C-e>" . Ctrl_PN
+  endif
+
+  " Start completing => keep record for fallback
+  let b:tab_complete_pos = pos
+  let b:completion_tried = 1
+
+  " User is typing a path or omnicomplete or tabcomplete pattern?
   let omni_pattern = get(b:, 'vcm_omni_pattern', get(g:, 'vcm_omni_pattern'))
   let is_omni_pattern = (omni_pattern isnot 0) && (match(substr, omni_pattern) >= 0)
+
   let file_pattern = '\v' . (has('win32') ? '\f\\' : '\/') . '\f*$'
   let is_file_pattern = match(substr, file_pattern) >= 0
-
-  if is_file_pattern
-    return "\<C-x>\<C-f>"
-  elseif is_omni_pattern && (!empty(&omnifunc))
-    if get(b:, 'tab_complete_pos', []) == pos
-      let exp = "\<C-x>" . dirs[!dir]
-    else
-      let exp = "\<C-x>\<C-o>"
-    endif
-    let b:tab_complete_pos = pos
-    return exp
-  endif
-
-  " First fallback to keyword completion if special completion was already tried.
-  if exists('b:completion_tried') && b:completion_tried
-    let b:completion_tried = 0
-    return "\<C-e>" . dirs[!dir]
-  endif
-
-  " Fallback
-  let b:completion_tried = 1
 
   let keyword_pattern = '\v\k+$'
   let is_keyword = match(substr, keyword_pattern) >= 0
   let tab_complete = get(b:, 'vcm_tab_complete', get(g:, 'vcm_tab_complete'))
 
-  if is_keyword && !empty(tab_complete)
-    return "\<C-x>\<C-" . tab_complete . ">"
+  if is_file_pattern
+    return "\<C-x>\<C-f>"
+  elseif is_omni_pattern && !empty(&omnifunc)
+    return "\<C-x>\<C-o>"
+  elseif is_keyword && !empty(tab_complete)
+    return "\<C-x>" . tab_complete
   else
-    return dirs[!dir]
+    return Ctrl_PN
   endif
 endfunction
 
