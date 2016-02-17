@@ -77,8 +77,12 @@ function! s:vim_completes_me(shift_tab)
 
   " Fallback
   let b:completion_tried = 1
+
+  let keyword_pattern = '\v\k+$'
+  let is_keyword = match(substr, keyword_pattern) >= 0
   let tab_complete = get(b:, 'vcm_tab_complete', get(g:, 'vcm_tab_complete'))
-  if !empty(tab_complete)
+
+  if is_keyword && !empty(tab_complete)
     return "\<C-x>\<C-" . tab_complete . ">"
   else
     return dirs[!dir]
