@@ -116,6 +116,7 @@ Values: string                                                               ~
 Default: '\v\k+(\.|->|::)$'                                                    ~
 
 The global pattern after which VimCompletesMe triggers Omni-completion.
+Set it equal to '0' to make it never match.
 
 ------------------------------------------------------------------------------
                                                          *'b:vcm_omni_pattern*
@@ -123,6 +124,7 @@ Values: string                                                               ~
 Default: unset                                                         ~
 
 The buffer-local pattern after which VimCompletesMe triggers Omni-completion to be set by a autocmd FileType ...
+Set it equal to '0' to make it never match.
 
 ==============================================================================
  3. FREQUENTLY ASKED QUESTIONS                             *VimCompletesMe-faq*
