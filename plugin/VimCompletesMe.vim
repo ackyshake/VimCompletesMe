@@ -79,6 +79,8 @@ function! s:vim_completes_me(shift_tab)
     return "\<C-x>\<C-o>"
   elseif map ==? "vim"
     return "\<C-x>\<C-v>"
+  elseif map ==? "spell"
+    return "\<C-x>\<C-s>"
   else
     return dirs[!dir]
   endif

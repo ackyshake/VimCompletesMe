@@ -47,8 +47,9 @@ You can set |b:vcm_tab_complete| to one of the following to use a specific type
 of completion:
 
 1. "user"   - User-defined completion |i_Ctrl-X_Ctrl-U|
-2. "vim"    - Vim command line completion |i_Ctrl-X_Ctrl-V|
-3. "omni"   - Omni completion |i_Ctrl-X_Ctrl-O|
+2. "omni"   - Omni completion |i_Ctrl-X_Ctrl-O|
+3. "vim"    - Vim command line completion |i_Ctrl-X_Ctrl-V|
+4. "spell"  - Spelling correction |i_Ctrl-X_Ctrl-S|
 
 The b:vcm_tab_complete makes a great |:autocmd| as follows:
 >
