@@ -28,8 +28,8 @@ following options:
 |'g:vcm_direction'|             Controls the direction of the completion.
 |'g:vcm_s_tab_behavior'|        Controls the behavior of Shift-Tab.
 |'g:vcm_default_maps'|          Set up default maps (Tab + Shift Tab)
-|'b:vcm_omni_pattern|           Local pattern to trigger Omni-completion
 |'g:vcm_omni_pattern|           Global pattern to trigger Omni-completion
+|'b:vcm_omni_pattern|           Local pattern to trigger Omni-completion
 
 ------------------------------------------------------------------------------
                                                          *'b:vcm_tab_complete'*
@@ -112,16 +112,16 @@ own mappings, unset this variable by putting the following in your |vimrc|:
 ------------------------------------------------------------------------------
                                                          *'g:vcm_omni_pattern*
 Values: string                                                               ~
-Default: '\v(\.\|->\|::)'                                                    ~
+Default: '\v(\.|->|::)$'                                                    ~
 
 The global pattern after which VimCompletesMe triggers Omni-completion.
 
 ------------------------------------------------------------------------------
                                                          *'b:vcm_omni_pattern*
 Values: string                                                               ~
-Default: g:vcm_omni_pattern                                                  ~
+Default: unset                                                         ~
 
-The buffer-local pattern after which VimCompletesMe triggers Omni-completion.
+The buffer-local pattern after which VimCompletesMe triggers Omni-completion to be set by a autocmd FileType ...
 
 ==============================================================================
  3. FREQUENTLY ASKED QUESTIONS                             *VimCompletesMe-faq*
