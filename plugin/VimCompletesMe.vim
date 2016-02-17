@@ -50,10 +50,10 @@ function! s:vim_completes_me(shift_tab)
   " Figure out if user has started typing a path or a period or an arrow
   " operator
   let is_omni_pattern = match(substr, get(b:, 'vcm_omni_pattern')) != -1
-  let file_pattern = '\v' (has('win32') ? '\\' : '\/') . '\f+$'
+  let file_pattern = '\v' . (has('win32') ? '\\' : '\/') . '\f*$'
   let is_file_pattern = match(substr, file_pattern) != -1
 
-  if file_pattern
+  if is_file_pattern
     return "\<C-x>\<C-f>"
   elseif is_omni_pattern && (&omnifunc != '')
     if get(b:, 'tab_complete_pos', []) == pos
