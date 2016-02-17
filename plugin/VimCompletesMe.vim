@@ -23,14 +23,13 @@ if !exists('g:vcm_default_maps')
 endif
 
 if !exists('g:vcm_omni_pattern')
-  let g:vcm_omni_pattern = '\v(\.|->|::)$'
+  let g:vcm_omni_pattern = '\v\k+(\.|->|::)\k*$'
 endif
 
 " Functions: {{{1
 function! s:vim_completes_me(shift_tab)
   let dirs = ["\<c-p>", "\<c-n>"]
   let dir = g:vcm_direction =~? '[nf]'
-  let map = exists('b:vcm_tab_complete') ? b:vcm_tab_complete : ''
 
   if pumvisible()
     if a:shift_tab
@@ -43,19 +42,20 @@ function! s:vim_completes_me(shift_tab)
   " Figure out whether we should indent.
   let pos = getpos('.')
   let substr = matchstr(strpart(getline(pos[1]), 0, pos[2]-1), "[^ \t]*$")
-  if strlen(substr) == 0
+  if empty(substr)
     return (a:shift_tab && !g:vcm_s_tab_behavior) ? "\<C-d>" : "\<Tab>"
   endif
 
   " Figure out if user has started typing a path or a period or an arrow
   " operator
-  let is_omni_pattern = match(substr, get(b:, 'vcm_omni_pattern')) != -1
-  let file_pattern = '\v' (has('win32') ? '\\' : '\/') . '\f+$'
-  let is_file_pattern = match(substr, file_pattern) != -1
+  let omni_pattern = get(b:, 'vcm_omni_pattern', get(g:, 'vcm_omni_pattern'))
+  let is_omni_pattern = (omni_pattern isnot 0) && (match(substr, omni_pattern) >= 0)
+  let file_pattern = '\v' . (has('win32') ? '\f\\' : '\/') . '\f*$'
+  let is_file_pattern = match(substr, file_pattern) >= 0
 
-  if file_pattern
+  if is_file_pattern
     return "\<C-x>\<C-f>"
-  elseif is_omni_pattern && (&omnifunc != '')
+  elseif is_omni_pattern && (!empty(&omnifunc))
     if get(b:, 'tab_complete_pos', []) == pos
       let exp = "\<C-x>" . dirs[!dir]
     else
@@ -73,14 +73,9 @@ function! s:vim_completes_me(shift_tab)
 
   " Fallback
   let b:completion_tried = 1
-  if map ==? "user"
-    return "\<C-x>\<C-u>"
-  elseif map ==? "omni"
-    return "\<C-x>\<C-o>"
-  elseif map ==? "vim"
-    return "\<C-x>\<C-v>"
-  elseif map ==? "spell"
-    return "\<C-x>\<C-s>"
+  let tab_complete = get(b:, 'vcm_tab_complete', get(g:, 'vcm_tab_complete'))
+  if tab_complete isnot 0
+    return "\<C-x>\<C-" . tab_complete . ">"
   else
     return dirs[!dir]
   endif
