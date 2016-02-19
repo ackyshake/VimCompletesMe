@@ -23,64 +23,57 @@ if !exists('g:vcm_default_maps')
 endif
 
 if !exists('g:vcm_omni_pattern')
-  let g:vcm_omni_pattern = '\v(\.\|->\|::)'
+  let g:vcm_omni_pattern = '\v\k+(\.|->|::)\k*$'
+endif
+
+if !exists('g:vcm_tab_complete')
+  let g:vcm_tab_complete = ''
 endif
 
 " Functions: {{{1
 function! s:vim_completes_me(shift_tab)
-  let dirs = ["\<c-p>", "\<c-n>"]
-  let dir = g:vcm_direction =~? '[nf]'
-  let map = exists('b:vcm_tab_complete') ? b:vcm_tab_complete : ''
+  let Ctrl_PN = (g:vcm_direction ==# 'n') && !a:shift_tab ? "\<c-p>" : "\<c-n>"
 
   if pumvisible()
-    if a:shift_tab
-      return dirs[!dir]
-    else
-      return dirs[dir]
-    endif
+      return Ctrl_PN
   endif
 
-  " Figure out whether we should indent.
+  " Cursor after whitespace => indent
   let pos = getpos('.')
   let substr = matchstr(strpart(getline(pos[1]), 0, pos[2]-1), "[^ \t]*$")
-  if strlen(substr) == 0
+  if empty(substr)
     return (a:shift_tab && !g:vcm_s_tab_behavior) ? "\<C-d>" : "\<Tab>"
   endif
 
-  " Figure out if user has started typing a path or a period or an arrow
-  " operator
-  let omni_pattern = match(substr, get(b:, 'vcm_omni_pattern')) != -1
-  let file_path = (has('win32') || has('win64')) ? '\\' : '\/'
-  let file_pattern = match(substr, file_path) != -1
-
-  if file_pattern
-    return "\<C-x>\<C-f>"
-  elseif omni_pattern && (&omnifunc != '')
-    if get(b:, 'tab_complete_pos', []) == pos
-      let exp = "\<C-x>" . dirs[!dir]
-    else
-      let exp = "\<C-x>\<C-o>"
-    endif
-    let b:tab_complete_pos = pos
-    return exp
-  endif
-
-  " First fallback to keyword completion if special completion was already tried.
-  if exists('b:completion_tried') && b:completion_tried
+  " Completion failed => Vim's generic keyword completion
+  if get(b:,'completion_tried') && (get(b:, 'tab_complete_pos', []) == pos)
     let b:completion_tried = 0
-    return "\<C-e>" . dirs[!dir]
+    return "\<C-e>" . Ctrl_PN
   endif
 
-  " Fallback
+  " Start completing => keep record for fallback
+  let b:tab_complete_pos = pos
   let b:completion_tried = 1
-  if map ==? "user"
-    return "\<C-x>\<C-u>"
-  elseif map ==? "omni"
+
+  " User is typing a path or omnicomplete or tabcomplete pattern?
+  let omni_pattern = get(b:, 'vcm_omni_pattern', get(g:, 'vcm_omni_pattern'))
+  let is_omni_pattern = (omni_pattern isnot 0) && (match(substr, omni_pattern) >= 0)
+
+  let file_pattern = '\v' . (has('win32') ? '\f\\' : '\/') . '\f*$'
+  let is_file_pattern = match(substr, file_pattern) >= 0
+
+  let keyword_pattern = '\v\k+$'
+  let is_keyword = match(substr, keyword_pattern) >= 0
+  let tab_complete = get(b:, 'vcm_tab_complete', get(g:, 'vcm_tab_complete'))
+
+  if is_file_pattern
+    return "\<C-x>\<C-f>"
+  elseif is_omni_pattern && !empty(&omnifunc)
     return "\<C-x>\<C-o>"
-  elseif map ==? "vim"
-    return "\<C-x>\<C-v>"
+  elseif is_keyword && !empty(tab_complete)
+    return "\<C-x>" . tab_complete
   else
-    return dirs[!dir]
+    return Ctrl_PN
   endif
 endfunction
 
