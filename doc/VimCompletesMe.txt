@@ -125,7 +125,7 @@ Values: string                                                               ~
 Default: '\v\k+(\.|->|::)\k*$'                                                ~
 
 The global pattern after which VimCompletesMe triggers Omni-completion and
-which applies if |b:vcm_omni-pattern| is unset. Set it equal to '0' to make
+applies if |b:vcm_omni-pattern| is unset. Set it equal to '0' to make
 it never match.
 
 ==============================================================================

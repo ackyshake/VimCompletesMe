@@ -23,7 +23,7 @@ if !exists('g:vcm_default_maps')
 endif
 
 if !exists('g:vcm_omni_pattern')
-  let g:vcm_omni_pattern = '\v\k+(\.|->|::)\k*$'
+  let g:vcm_omni_pattern = '\m\k\+\(\.\|->\|::\)\k*$'
 endif
 
 " Functions: {{{1
@@ -51,7 +51,7 @@ function! s:vim_completes_me(shift_tab)
   " operator
   let omni_pattern = get(b:, 'vcm_omni_pattern', get(g:, 'vcm_omni_pattern'))
   let is_omni_pattern = (omni_pattern isnot 0) && (match(substr, omni_pattern) >= 0)
-  let file_pattern = '\v' . (has('win32') ? '\f\\' : '\/') . '\f*$'
+  let file_pattern = '\m' (has('win32') ? '\f\\' : '\/') . '\f*$'
   let is_file_pattern = match(substr, file_pattern) >= 0
 
   if is_file_pattern
