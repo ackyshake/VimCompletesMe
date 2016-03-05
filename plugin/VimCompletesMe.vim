@@ -23,70 +23,11 @@ if !exists('g:vcm_default_maps')
 endif
 
 if !exists('g:vcm_omni_pattern')
-  let g:vcm_omni_pattern = '\m\k\+\(\.\|->\|::\)\k*$'
+  let g:vcm_omni_pattern = '\k\+\(\.\|->\|::\)\k*$'
 endif
 
 " Functions: {{{1
 function! s:vim_completes_me(shift_tab)
-  let dirs = ["\<c-p>", "\<c-n>"]
-  let dir = g:vcm_direction =~? '[nf]'
-  let map = exists('b:vcm_tab_complete') ? b:vcm_tab_complete : ''
-
-  if pumvisible()
-    if a:shift_tab
-      return dirs[!dir]
-    else
-      return dirs[dir]
-    endif
-  endif
-
-  " Figure out whether we should indent.
-  let pos = getpos('.')
-  let substr = matchstr(strpart(getline(pos[1]), 0, pos[2]-1), "[^ \t]*$")
-  if empty(substr)
-    return (a:shift_tab && !g:vcm_s_tab_behavior) ? "\<C-d>" : "\<Tab>"
-  endif
-
-  " Figure out if user has started typing a path or a period or an arrow
-  " operator
-  let omni_pattern = get(b:, 'vcm_omni_pattern', get(g:, 'vcm_omni_pattern'))
-  let is_omni_pattern = (omni_pattern isnot 0) && (match(substr, omni_pattern) >= 0)
-  let file_pattern = '\m' (has('win32') ? '\f\\' : '\/') . '\f*$'
-  let is_file_pattern = match(substr, file_pattern) >= 0
-
-  if is_file_pattern
-    return "\<C-x>\<C-f>"
-  elseif is_omni_pattern && (!empty(&omnifunc))
-    if get(b:, 'tab_complete_pos', []) == pos
-      let exp = "\<C-x>" . dirs[!dir]
-    else
-      let exp = "\<C-x>\<C-o>"
-    endif
-    let b:tab_complete_pos = pos
-    return exp
-  endif
-
-  " First fallback to keyword completion if special completion was already tried.
-  if exists('b:completion_tried') && b:completion_tried
-    let b:completion_tried = 0
-    return "\<C-e>" . dirs[!dir]
-  endif
-
-  " Fallback
-  let b:completion_tried = 1
-  if map ==? "user"
-    return "\<C-x>\<C-u>"
-  elseif map ==? "omni"
-    return "\<C-x>\<C-o>"
-  elseif map ==? "vim"
-    return "\<C-x>\<C-v>"
-  elseif map ==? "spell"
-    return "\<C-x>\<C-s>"
-  else
-    return dirs[!dir]
-  endif
-endfunction
-" function! s:vim_completes_me(shift_tab)
   let dirs = ["\<c-p>", "\<c-n>"]
   let dir = g:vcm_direction =~? '[nf]'
   let map = exists('b:vcm_tab_complete') ? b:vcm_tab_complete : ''
