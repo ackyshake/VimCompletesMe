@@ -47,8 +47,9 @@ You can set |b:vcm_tab_complete| to one of the following to use a specific type
 of completion:
 
 1. "user"   - User-defined completion |i_Ctrl-X_Ctrl-U|
-2. "vim"    - Vim command line completion |i_Ctrl-X_Ctrl-V|
-3. "omni"   - Omni completion |i_Ctrl-X_Ctrl-O|
+2. "omni"   - Omni completion |i_Ctrl-X_Ctrl-O|
+3. "vim"    - Vim command line completion |i_Ctrl-X_Ctrl-V|
+4. "spell"  - Spelling correction |i_Ctrl-X_Ctrl-S|
 
 The b:vcm_tab_complete makes a great |:autocmd| as follows:
 >
@@ -110,18 +111,22 @@ own mappings, unset this variable by putting the following in your |vimrc|:
     let g:vcm_default_maps = 0
 <
 ------------------------------------------------------------------------------
-                                                         *'g:vcm_omni_pattern*
-Values: string                                                               ~
-Default: '\v(\.\|->\|::)'                                                    ~
-
-The global pattern after which VimCompletesMe triggers Omni-completion.
-
-------------------------------------------------------------------------------
                                                          *'b:vcm_omni_pattern*
 Values: string                                                               ~
-Default: g:vcm_omni_pattern                                                  ~
+Default: unset                                                         ~
 
 The buffer-local pattern after which VimCompletesMe triggers Omni-completion.
+To be set by an 'autocmd FileType ...'. Set it equal to '0' to make it never
+match.
+
+------------------------------------------------------------------------------
+                                                         *'g:vcm_omni_pattern*
+Values: string                                                               ~
+Default: '\v\k+(\.|->|::)\k*$'                                                ~
+
+The global pattern after which VimCompletesMe triggers Omni-completion and
+applies if |b:vcm_omni-pattern| is unset. Set it equal to '0' to make
+it never match.
 
 ==============================================================================
  3. FREQUENTLY ASKED QUESTIONS                             *VimCompletesMe-faq*
