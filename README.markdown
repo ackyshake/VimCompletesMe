@@ -53,3 +53,7 @@ Once the helptags have been generated, see `:h VimCompletesMe` for usage.
 ## License
 Copyright (c) Akshay Hegde. Distributed under the same terms as Vim itself. See
 `:help license`
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ajh17/vimcompletesme/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
