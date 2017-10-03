@@ -45,6 +45,10 @@ paste:
 
 Once the helptags have been generated, see `:h VimCompletesMe` for usage.
 
+If helptags does not generate automatically, please include following lines in your .vimrc file in that case:
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
 ## Thanks
 * [bairui](https://github.com/dahu) for helping me with this plugin, and for
   the kickass name.
