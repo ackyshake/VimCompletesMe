@@ -40,11 +40,18 @@ function! s:vim_completes_me(shift_tab)
     let suffix_special = ""
   endif
 
-  let completion_type = exists('b:vcm_tab_complete') ? b:vcm_tab_complete : ''
+  " Navigate the popup menu
+  if pumvisible()
+    if b:special_completion
+      return a:shift_tab ? dirs[!dir_special] : dirs[dir_special]
+    else
+      return a:shift_tab ? dirs[!dir_keyword] : dirs[dir_keyword]
+    endif
+  endif
 
   " Use the user's supplied shift-tab mapping
-  if a:shift_tab && exists('g:vcm_s_completion_typeping')
-      return g:vcm_s_completion_typeping
+  if a:shift_tab && exists('g:vcm_shift_tab_mapping')
+      return g:vcm_shift_tab_mapping
   endif
 
   " Indent/unindent if on whitespace
@@ -55,53 +62,60 @@ function! s:vim_completes_me(shift_tab)
       return (a:shift_tab && !g:vcm_s_tab_behavior) ? l:s_tab_deindent : "\<Tab>"
   endif
 
-  " Navigate the popup menu
-  if pumvisible()
-    if b:special_completion
-      return a:shift_tab ? dirs[!dir_special] : dirs[dir_special]
-    else
-      return a:shift_tab ? dirs[!dir_keyword] : dirs[dir_keyword]
-    endif
-  endif
-
   " Do the proper completion
+  let completion_type = exists('b:vcm_tab_complete') ? b:vcm_tab_complete : ''
   let omni_pattern = get(b:, 'vcm_omni_pattern', get(g:, 'vcm_omni_pattern'))
   let is_omni_pattern = match(substr, omni_pattern) != -1
   let file_pattern = (has('win32') || has('win64')) ? '\\\|\/' : '\/'
   let is_file_pattern = match(substr, file_pattern) != -1
 
   if b:completion_tried
-    let b:special_completion = 0
-    let b:completion_tried = 0
     if get(b:, 'tab_complete_pos', []) == pos
+      " If there were no completion results
+      let b:special_completion = 0
+      " Fallback to keyword completion
       return "\<C-e>" . dirs[dir_keyword]
     else
-      return dirs[dir_keyword]
+      " If there was only one match and menuone is unset
+      " (Possible to remain in ^X mode while typing)
+      let b:tab_complete_pos = pos
+      " (Direction doesn't matter bc there's only 1 result)
+      return "\<C-n>"
     endif
   else
     let b:completion_tried = 1
     let b:tab_complete_pos = pos
-    if completion_type ==? "user" && !empty(&completefunc)
-      let b:special_completion = 1
-      let exp = "\<C-x>\<C-u>" . suffix_special
-    elseif (completion_type ==? "omni" || is_omni_pattern) && !empty(&omnifunc)
-      let b:special_completion = 1
-      let exp = "\<C-x>\<C-o>" . suffix_special
-    elseif (completion_type ==? "file" || is_file_pattern)
-      let b:special_completion = 1
-      let exp = "\<C-x>\<C-f>" . suffix_special
-    elseif completion_type ==? "vim"
-      let b:special_completion = 1
-      let exp = "\<C-x>\<C-v>" . suffix_special
-    elseif completion_type =~? "tags?"
-      let b:special_completion = 1
-      let exp = "\<C-x>\<C-[>" . suffix_special
-    elseif completion_type ==? "dict" && !empty(&dictionary)
-      let b:special_completion = 1
-      let exp = "\<C-x>\<C-K>" . suffix_special
+    if empty(completion_type)
+      if is_omni_pattern && !empty(&omnifunc)
+        let b:special_completion = 1
+        let exp = "\<C-x>\<C-o>" . suffix_special
+      elseif is_file_pattern
+        let b:special_completion = 1
+        let exp = "\<C-x>\<C-f>" . suffix_special
+      else
+        let b:special_completion = 0
+        let exp = dirs[dir_keyword]
+      endif
     else
-      let b:special_completion = 0
-      let exp = dirs[dir_keyword]
+      if completion_type ==? "keyword"
+        let b:special_completion = 0
+        let exp = dirs[dir_keyword]
+      else
+        let b:special_completion = 1
+        if completion_type ==? "omni" && !empty(&omnifunc)
+          let exp = "\<C-x>\<C-o>" . suffix_special
+        elseif completion_type ==? "user" && !empty(&completefunc)
+          let exp = "\<C-x>\<C-u>" . suffix_special
+        elseif completion_type ==? "file"
+          let exp = "\<C-x>\<C-f>" . suffix_special
+        elseif completion_type ==? "vim"
+          let exp = "\<C-x>\<C-v>" . suffix_special
+        elseif completion_type =~? "tags?"
+          let exp = "\<C-x>\<C-[>" . suffix_special
+        elseif completion_type ==? "dict" && !empty(&dictionary)
+          let exp = "\<C-x>\<C-K>" . suffix_special
+        endif
+      endif
     endif
     return exp
   endif
