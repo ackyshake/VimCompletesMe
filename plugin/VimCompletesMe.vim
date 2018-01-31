@@ -13,8 +13,11 @@ let g:loaded_VimCompletesMe = 1
 if !exists('g:vcm_s_tab_behavior')
   let g:vcm_s_tab_behavior = 0
 endif
-if !exists('g:vcm_direction')
-  let g:vcm_direction = 'n'
+if !exists('g:vcm_direction_keyword')
+  let g:vcm_direction_keyword = 'p'
+endif
+if !exists('g:vcm_direction_special')
+  let g:vcm_direction_special = 'n'
 endif
 if !exists('g:vcm_default_maps')
   let g:vcm_default_maps = 1
@@ -23,17 +26,28 @@ if !exists('g:vcm_omni_pattern')
   let g:vcm_omni_pattern = '\k\+\(\.\|->\|::\)\k*$'
 endif
 
+" Variables: {{{1
+let b:special_completion = 1
+
 " Functions: {{{1
 function! s:vim_completes_me(shift_tab)
-  let dirs = ["\<c-p>", "\<c-n>"]
-  let dir = g:vcm_direction =~? '[nf]'
-  let map = exists('b:vcm_tab_complete') ? b:vcm_tab_complete : ''
-
-  if pumvisible()
-    return a:shift_tab ? dirs[!dir] : dirs[dir]
+  let dirs = ["\<c-n>", "\<c-p>"]
+  let dir_keyword = g:vcm_direction_keyword ==# 'p'
+  let dir_special = g:vcm_direction_special ==# 'p'
+  if g:vcm_direction_special ==# 'p'
+    let suffix_special = "\<C-p>\<C-p>"
+  else
+    let suffix_special = ""
   endif
 
-  " Figure out whether we should indent/de-indent.
+  let completion_type = exists('b:vcm_tab_complete') ? b:vcm_tab_complete : ''
+
+  " Use the user's supplied shift-tab mapping
+  if a:shift_tab && exists('g:vcm_s_completion_typeping')
+      return g:vcm_s_completion_typeping
+  endif
+
+  " Indent/unindent if on whitespace
   let pos = getpos('.')
   let substr = matchstr(strpart(getline(pos[1]), 0, pos[2]-1), "[^ \t]*$")
   if empty(substr)
@@ -41,48 +55,57 @@ function! s:vim_completes_me(shift_tab)
       return (a:shift_tab && !g:vcm_s_tab_behavior) ? l:s_tab_deindent : "\<Tab>"
   endif
 
-  if a:shift_tab && exists('g:vcm_s_tab_mapping')
-      return g:vcm_s_tab_mapping
+  " Navigate the popup menu
+  if pumvisible()
+    if b:special_completion
+      return a:shift_tab ? dirs[!dir_special] : dirs[dir_special]
+    else
+      return a:shift_tab ? dirs[!dir_keyword] : dirs[dir_keyword]
+    endif
   endif
 
+  " Do the proper completion
   let omni_pattern = get(b:, 'vcm_omni_pattern', get(g:, 'vcm_omni_pattern'))
   let is_omni_pattern = match(substr, omni_pattern) != -1
   let file_pattern = (has('win32') || has('win64')) ? '\\\|\/' : '\/'
   let is_file_pattern = match(substr, file_pattern) != -1
 
-  if is_omni_pattern && (!empty(&omnifunc))
-    " Check position so that we can fallback if at the same pos.
-    if get(b:, 'tab_complete_pos', []) == pos && b:completion_tried
-      let exp = "\<C-x>" . dirs[dir]
-    else
-      echo "Looking for members..."
-      let exp = (!empty(&completefunc) && map ==? "user") ? "\<C-x>\<C-u>" : "\<C-x>\<C-o>"
-      let b:completion_tried = 1
-    endif
-    let b:tab_complete_pos = pos
-    return exp
-  elseif is_file_pattern
-    return "\<C-x>\<C-f>"
-  endif
-
-  " First fallback to keyword completion if special completion was already tried.
-  if exists('b:completion_tried') && b:completion_tried
+  if b:completion_tried
+    let b:special_completion = 0
     let b:completion_tried = 0
-    return "\<C-e>" . dirs[dir]
+    if get(b:, 'tab_complete_pos', []) == pos
+      return "\<C-e>" . dirs[dir_keyword]
+    else
+      return dirs[dir_keyword]
+    endif
+  else
+    let b:completion_tried = 1
+    let b:tab_complete_pos = pos
+    if completion_type ==? "user" && !empty(&completefunc)
+      let b:special_completion = 1
+      let exp = "\<C-x>\<C-u>" . suffix_special
+    elseif (completion_type ==? "omni" || is_omni_pattern) && !empty(&omnifunc)
+      let b:special_completion = 1
+      let exp = "\<C-x>\<C-o>" . suffix_special
+    elseif (completion_type ==? "file" || is_file_pattern)
+      let b:special_completion = 1
+      let exp = "\<C-x>\<C-f>" . suffix_special
+    elseif completion_type ==? "vim"
+      let b:special_completion = 1
+      let exp = "\<C-x>\<C-v>" . suffix_special
+    elseif completion_type =~? "tags?"
+      let b:special_completion = 1
+      let exp = "\<C-x>\<C-[>" . suffix_special
+    elseif completion_type ==? "dict" && !empty(&dictionary)
+      let b:special_completion = 1
+      let exp = "\<C-x>\<C-K>" . suffix_special
+    else
+      let b:special_completion = 0
+      let exp = dirs[dir_keyword]
+    endif
+    return exp
   endif
 
-  " Fallback
-  let b:completion_tried = 1
-  if map ==? "user"
-    return "\<C-x>\<C-u>"
-  elseif map ==? "omni"
-    echo "Looking for members..."
-    return "\<C-x>\<C-o>"
-  elseif map ==? "vim"
-    return "\<C-x>\<C-v>"
-  else
-    return dirs[dir]
-  endif
 endfunction
 
 inoremap <expr> <plug>vim_completes_me_forward  <sid>vim_completes_me(0)
