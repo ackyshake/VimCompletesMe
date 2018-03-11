@@ -13,11 +13,8 @@ let g:loaded_VimCompletesMe = 1
 if !exists('g:vcm_s_tab_behavior')
   let g:vcm_s_tab_behavior = 0
 endif
-if !exists('g:vcm_direction_keyword')
-  let g:vcm_direction_keyword = 'p'
-endif
-if !exists('g:vcm_direction_special')
-  let g:vcm_direction_special = 'n'
+if !exists('g:vcm_direction')
+  let g:vcm_direction = 'p'
 endif
 if !exists('g:vcm_default_maps')
   let g:vcm_default_maps = 1
@@ -32,13 +29,8 @@ let b:special_completion = 1
 " Functions: {{{1
 function! s:vim_completes_me(shift_tab)
   let dirs = ["\<c-n>", "\<c-p>"]
-  let dir_keyword = g:vcm_direction_keyword ==# 'p'
-  let dir_special = g:vcm_direction_special ==# 'p'
-  if g:vcm_direction_special ==# 'p'
-    let suffix_special = "\<C-p>\<C-p>"
-  else
-    let suffix_special = ""
-  endif
+  let dir_keyword = g:vcm_direction ==# 'p'
+  let dir_special = 0
 
   " Navigate the popup menu
   if pumvisible()
@@ -88,10 +80,10 @@ function! s:vim_completes_me(shift_tab)
     if empty(completion_type)
       if is_omni_pattern && !empty(&omnifunc)
         let b:special_completion = 1
-        let exp = "\<C-x>\<C-o>" . suffix_special
+        let exp = "\<C-x>\<C-o>"
       elseif is_file_pattern
         let b:special_completion = 1
-        let exp = "\<C-x>\<C-f>" . suffix_special
+        let exp = "\<C-x>\<C-f>"
       else
         let b:special_completion = 0
         let exp = dirs[dir_keyword]
@@ -103,17 +95,13 @@ function! s:vim_completes_me(shift_tab)
       else
         let b:special_completion = 1
         if completion_type ==? "omni" && !empty(&omnifunc)
-          let exp = "\<C-x>\<C-o>" . suffix_special
+          let exp = "\<C-x>\<C-o>"
         elseif completion_type ==? "user" && !empty(&completefunc)
-          let exp = "\<C-x>\<C-u>" . suffix_special
+          let exp = "\<C-x>\<C-u>"
         elseif completion_type ==? "file"
-          let exp = "\<C-x>\<C-f>" . suffix_special
+          let exp = "\<C-x>\<C-f>"
         elseif completion_type ==? "vim"
-          let exp = "\<C-x>\<C-v>" . suffix_special
-        elseif completion_type =~? "tags?"
-          let exp = "\<C-x>\<C-[>" . suffix_special
-        elseif completion_type ==? "dict" && !empty(&dictionary)
-          let exp = "\<C-x>\<C-K>" . suffix_special
+          let exp = "\<C-x>\<C-v>"
         endif
       endif
     endif
