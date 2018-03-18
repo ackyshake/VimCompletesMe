@@ -30,20 +30,18 @@ again will switch back to Vim's local keyword completion. VimCompletesMe will go
 back to trying the special completion for the next tab completion.
 
 You can set the `b:vcm_tab_complete` variable interactively, or in an
-autocommand:
+`autocmd`. For instance, the `autocmd` below will use Vim Command Line
+completion for all vim filetypes:
 
-    autocmd FileType text,markdown let b:vcm_tab_complete = 'dict'
-
-Striving for minimalism, this plugin weighs under 80 lines of code.
+    autocmd FileType vim let b:vcm_tab_complete = 'vim'
 
 ## Installation
-If you don't have a preferred installation method, I recommend installing
-[pathogen.vim](https://github.com/tpope/vim-pathogen), and then simply copy and
-paste:
+If you use Vim 8 or better, simply copy and paste:
 
-    cd ~/.vim/bundle && git clone git://github.com/ajh17/VimCompletesMe.git
+    git clone git://github.com/ajh17/VimCompletesMe.git ~/.vim/pack/vendor/start/VimCompletesMe
 
-Once the helptags have been generated, see `:h VimCompletesMe` for usage.
+Once the helptags have been generated (`:helptags ALL`), see `:h VimCompletesMe`
+for usage.
 
 ## Thanks
 * [bairui](https://github.com/dahu) for helping me with this plugin, and for
